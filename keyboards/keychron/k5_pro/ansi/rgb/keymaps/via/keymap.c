@@ -37,6 +37,7 @@ enum layers {
     MAC_FN,
     WIN_BASE,
     WIN_FN,
+    MOUSE_PAD,
 };
 
 #define KC_TASK LGUI(KC_TAB)        // Task viewer
@@ -78,12 +79,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,  KC_LWIN,  KC_LALT,                                KC_SPC,                                 KC_RALT,  KC_RWIN, MO(WIN_FN),KC_RCTL, KC_LEFT,  KC_DOWN,  KC_RGHT, KC_P0,            KC_PDOT),
 
     [WIN_FN] = LAYOUT_108_ansi(
-        QK_BOOT,            KC_BRID,  KC_BRIU,  KC_TASK,    KC_FILE,          RGB_VAD,  RGB_VAI,  KC_MPRV,      KC_MPLY,  KC_MNXT,           KC_MUTE,    KC_VOLD,  KC_VOLU, KC_SNIP,  KC_CORT,  RGB_TOG, TOG_BT,  _______, _______, _______,
-        QK_RBT,   BT_HST1,  BT_HST2,  BT_HST3,  _______,    _______,          _______,  _______,  _______,      _______,  _______,           _______,    _______,  _______, _______,  RGB_M_P,  RGB_SPI, _______, _______, _______, _______,
-        RGB_TOG,  UC_LINX,  UC_WINC,  UC_MAC,   _______,    TURBO,            _______,  _______,  K_ANTI_IDLE,  _______,  _______,           _______,    _______,  _______, _______,  _______,  RGB_SPD, _______, _______, _______, _______,
-        _______,  _______,  K_RFLPTB, K_DFLPTB, K_FLPTB,    K_GAME_MODE,      _______,  _______,  _______,      _______,  _______,           _______,              _______,                              _______, _______, _______,
-        _______,            _______,  _______,  K_PBFLPTB,  K_FLIP_MODE,      BAT_LVL,  NK_TOGG,  _______,      _______,  _______,           _______,              _______,           RGB_SAI,           _______, _______, _______, _______,
-        _______,  _______,  _______,                                          _______,                                    K_AUT_COR_ACCENT,  K_AUT_COR,  _______,  _______, RGB_HUD,  RGB_SAD,  RGB_HUI, _______,          _______),
+        QK_BOOT,            KC_BRID,  KC_BRIU,  KC_TASK,    KC_FILE,          RGB_VAD,  RGB_VAI,  KC_MPRV,       KC_MPLY,  KC_MNXT,           KC_MUTE,    KC_VOLD,  KC_VOLU, KC_SNIP,  KC_CORT,  RGB_TOG, TOG_BT,  _______, _______, _______,
+        QK_RBT,   BT_HST1,  BT_HST2,  BT_HST3,  _______,    _______,          _______,  _______,  _______,       _______,  _______,           _______,    _______,  _______, _______,  RGB_M_P,  RGB_SPI, _______, _______, _______, _______,
+        EE_CLR,   UC_LINX,  UC_WINC,  UC_MAC,   _______,    TURBO,            _______,  _______,  K_ANTI_IDLE,   _______,  _______,           _______,    _______,  _______, _______,  _______,  RGB_SPD, _______, _______, _______, _______,
+        _______,  _______,  K_RFLPTB, K_DFLPTB, K_FLPTB,    K_GAME_MODE,      _______,  _______,  _______,       _______,  _______,           _______,              _______,                              _______, _______, _______,
+        _______,            _______,  _______,  K_PBFLPTB,  K_FLIP_MODE,      BAT_LVL,  NK_TOGG,  TG(MOUSE_PAD), _______,  _______,           _______,              _______,           RGB_SAI,           _______, _______, _______, _______,
+        _______,  _______,  _______,                                          _______,                                     K_AUT_COR_ACCENT,  K_AUT_COR,  _______,  _______, RGB_HUD,  RGB_SAD,  RGB_HUI, _______,          _______),
+
+    [MOUSE_PAD] = LAYOUT_108_ansi(
+        TG(MOUSE_PAD),          _______, _______, _______, _______, _______,  _______,  _______,  _______,  _______, _______,  _______,        _______, _______,     _______,     _______,      _______, _______, _______, _______,
+        _______,       KC_ACL0, KC_ACL1, KC_ACL2, _______, _______, _______,  _______,  _______,  _______,  _______, _______,  _______,        _______, _______,     _______,     KC_WH_U,      _______, _______, _______, _______,
+        _______,       _______, _______, _______, _______, _______, _______,  _______,  _______,  _______,  _______, _______,  _______,        _______, KC_WH_L,     KC_WH_R,     KC_WH_D,      _______, _______, _______, _______,
+        _______,       _______, _______, _______, _______, _______, _______,  _______,  _______,  _______,  _______, _______,                  _______,                                         _______, _______, _______,
+        _______,                KC_BTN1, KC_BTN2, KC_BTN3, KC_BTN4, KC_BTN5,  KC_BTN6,  KC_BTN7,  KC_BTN8,  _______, _______,                  _______,              KC_MS_UP,                  _______, _______, _______, _______,
+        _______,       _______, _______,                            _______,                                _______, _______,  TG(MOUSE_PAD),  _______, KC_MS_LEFT,  KC_MS_DOWN,  KC_MS_RIGHT,  _______,          _______),
 };
 
 static bool changed = 0;
