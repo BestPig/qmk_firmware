@@ -25,3 +25,5 @@ SRC += features/flip_mode.c
 #SRC += bootmagic_lite.c
 
 # EXTRAFLAGS += -O3
+
+KC_BLUETOOTH_ENABLE = yes

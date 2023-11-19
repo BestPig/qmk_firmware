@@ -63,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,  KC_LOPTN, KC_LCMMD,                               KC_SPC,                                 KC_RCMMD, KC_ROPTN,MO(MAC_FN),KC_RCTL, KC_LEFT,  KC_DOWN,  KC_RGHT, KC_P0,            KC_PDOT),
 
     [MAC_FN] = LAYOUT_108_ansi(
-        QK_BOOT,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,  _______,  _______,  RGB_TOG, TOG_BT,  _______, _______, _______,
+        QK_BOOT,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,  _______,  _______,  RGB_TOG, TOG_BT,  _______, _______, REPEAT,
         QK_RBT,   BT_HST1,  BT_HST2,  BT_HST3,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______,
         _______,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,            _______,                              _______, _______, _______,
@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______, _______,  _______,  _______, _______,          _______),
 
     [WIN_BASE] = LAYOUT_108_ansi(
-        KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,  KC_PSCR,  KC_CTANA, RGB_MOD, _______, _______, _______, _______,
+        KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,  KC_PSCR,  KC_CTANA, RGB_MOD, _______, _______, _______, REPEAT,
         KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC, KC_INS,   KC_HOME,  KC_PGUP, KC_NUM,  KC_PSLS, KC_PAST, KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS, KC_DEL,   KC_END,   KC_PGDN, KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,                               KC_P4,   KC_P5,   KC_P6,
@@ -106,6 +106,11 @@ bool game_mode_enabled = 0;
 bool prog_key_enabled = 0;
 bool flip_mode_enabled = 0;
 uint8_t flip_char_counter  = 0;
+
+#ifdef REPEAT_LAST_KEY
+uint16_t last_keycode;
+bool repeat_key_enabled = 0;
+#endif
 
 #ifdef OS_DETECTION_ENABLE
 void set_unicode_mode(os_variant_t os) {
@@ -154,6 +159,16 @@ uint32_t do_anti_idle_routine(uint32_t trigger_time, void *cb_arg) {
     }
     return 46000;
 }
+
+#ifdef REPEAT_LAST_KEY
+uint32_t do_repeat_key(uint32_t trigger_time, void *cb_arg) {
+    if (!repeat_key_enabled) {
+        return 0;
+    }
+    tap_code(last_keycode);
+    return 100;
+}
+#endif
 
 void keyboard_post_init_user(void) {
     idle_timer = timer_read32();
@@ -212,6 +227,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         idle_timer = timer_read32();
         const uint8_t current_mods = get_mods() | get_oneshot_mods();
+
+        #ifdef REPEAT_LAST_KEY
+        if (keycode != REPEAT) {
+            last_keycode = keycode;
+        }
+        #endif
 
         switch (keycode) {
             case RGB_TOG:
@@ -326,6 +347,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     set_transport(TRANSPORT_BLUETOOTH);
                 }
                 return false; // Let QMK send the enter press/release events
+            #endif
+            #ifdef REPEAT_LAST_KEY
+            case REPEAT:
+                if (repeat_key_enabled == 0) {
+                    defer_exec(100, do_repeat_key, NULL);
+                }
+                repeat_key_enabled = !repeat_key_enabled;
+                return false;
             #endif
             default:
                 return true; // Process all other keycodes normally

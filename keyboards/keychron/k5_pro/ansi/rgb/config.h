@@ -52,3 +52,5 @@
 #endif
 
 #define DYNAMIC_KEYMAP_LAYER_COUNT 5
+
+#define REPEAT_LAST_KEY

@@ -7,7 +7,7 @@ extern "C" {
 #include "quantum.h"
 
 enum custom_keycodes {
-  TURBO = QK_KB_0,
+  TURBO = QK_USER,
   K_AUT_COR,
   K_AUT_COR_ACCENT,
   K_ANTI_IDLE,
@@ -19,6 +19,7 @@ enum custom_keycodes {
   K_OS,
   K_FLIP_MODE,
   TOG_BT,
+  REPEAT,
   // Other custom keys...
 };
 
