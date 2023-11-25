@@ -108,6 +108,7 @@ bool flip_mode_enabled = 0;
 uint8_t flip_char_counter  = 0;
 
 #ifdef REPEAT_LAST_KEY
+uint8_t last_keymod;
 uint16_t last_keycode;
 bool repeat_key_enabled = 0;
 #endif
@@ -165,7 +166,10 @@ uint32_t do_repeat_key(uint32_t trigger_time, void *cb_arg) {
     if (!repeat_key_enabled) {
         return 0;
     }
+    uint8_t current_mods = get_mods();
+    set_mods(last_keymod);
     tap_code(last_keycode);
+    set_mods(current_mods);
     return 100;
 }
 #endif
@@ -230,6 +234,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         #ifdef REPEAT_LAST_KEY
         if (keycode != REPEAT) {
+            last_keymod = current_mods;
             last_keycode = keycode;
         }
         #endif
